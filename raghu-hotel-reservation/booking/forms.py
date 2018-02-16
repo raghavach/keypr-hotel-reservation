@@ -47,7 +47,6 @@ class BookingIDAuthenticationForm(AuthenticationForm):
             label=_("Booking ID"), max_length=100)
 
     def clean_username(self):
-        """Prevent case-sensitive erros in email/username."""
         return self.cleaned_data['username'].lower()
 
     def clean(self):
