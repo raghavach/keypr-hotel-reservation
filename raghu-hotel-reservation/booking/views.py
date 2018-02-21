@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, DetailView, ListView
+from django.core.exceptions import ValidationError
 
 from .forms import BookingForm
 from .models import Booking
@@ -17,11 +18,16 @@ class BookingViewMixin(object):
 class BookingCreateView(BookingViewMixin, CreateView):
     """View to create a new ``Booking`."""
     def get_success_url(self):
+
         return reverse('booking_detail', kwargs={'pk': self.object.pk})
 
     def get_form_kwargs(self, *args, **kwargs):
         kwargs = super(BookingCreateView, self).get_form_kwargs(
             *args, **kwargs)
+        if 'data' in kwargs:
+            count = list(Booking.objects.filter(date_from=kwargs['data']['date_from']))
+            if count > 20:
+                raise ValidationError("Sorry!!!. There are no rooms available for selected dates.")
         if self.request.user.is_authenticated():
             kwargs.update({'user': self.request.user})
         else:

@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_libs.models_mixins import TranslationModelMixin
 from django_countries.fields import CountryField
 from hvad.models import TranslatableModel, TranslatedFields
+from django.core.exceptions import ValidationError
 
 
 class BookingStatus(TranslationModelMixin, TranslatableModel):
@@ -32,6 +33,13 @@ class BookingStatus(TranslationModelMixin, TranslatableModel):
             max_length=128,
         )
     )
+
+import datetime
+
+
+def validate_date(value):
+    if value < datetime.datetime.today():
+        raise ValidationError("please choose valid date  ")
 
 
 @python_2_unicode_compatible
@@ -172,13 +180,18 @@ class Booking(models.Model):
     )
 
     date_from = models.DateTimeField(
+        validators=[validate_date],
         verbose_name=_('From'),
         blank=True, null=True,
+        help_text="mm/dd/yyyy",
     )
 
     date_until = models.DateTimeField(
+        validators=[validate_date],
         verbose_name=_('Until'),
         blank=True, null=True,
+        help_text="mm/dd/yyyy",
+
     )
 
     creation_date = models.DateTimeField(

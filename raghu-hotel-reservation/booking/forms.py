@@ -31,6 +31,10 @@ class BookingForm(forms.ModelForm):
             self.instance.booking_status = status_object
         return super(BookingForm, self).save(*args, **kwargs)
 
+    # def clean(self):
+
+
+
     class Meta:
         model = Booking
         fields = ('gender', 'title', 'forename', 'surname', 'nationality',
